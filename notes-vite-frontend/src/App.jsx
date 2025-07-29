@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedNote, setSelectedNote] = useState(null);
@@ -40,7 +42,7 @@ function App() {
 
   const fetchNotes = async () => {
     try {
-      const res = await fetch("http://localhost:3001/notes", {
+      const res = await fetch(`${API_URL}/notes`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -79,7 +81,7 @@ function App() {
       const endpoint = isRegistering ? '/register' : '/login';
       const body = isRegistering ? { email, password, name } : { email, password };
       
-      const res = await fetch(`http://localhost:3001${endpoint}`, {
+      const res = await fetch(`${API_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -114,9 +116,8 @@ function App() {
   };
 
   const createNewNote = () => {
-    // Create a temporary note object
     const tempNote = {
-      id: Date.now(), // Temporary ID
+      id: Date.now(),
       title: "Untitled Note",
       content: "",
       createdAt: new Date(),
@@ -127,37 +128,36 @@ function App() {
     setIsEditing(true);
     setEditTitle("Untitled Note");
     setEditContent("");
-    setSearchTerm(""); // Clear search when creating new note
+    setSearchTerm("");
   };
 
-// Function for saving:
-const saveNewNote = async () => {
-  try {
-    const res = await fetch("http://localhost:3001/notes", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ title: editTitle, content: editContent }),
-    });
-    if (!res.ok) {
-      throw new Error("Failed to create note");
+  const saveNewNote = async () => {
+    try {
+      const res = await fetch(`${API_URL}/notes`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ title: editTitle, content: editContent }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to create note");
+      }
+      const newNote = await res.json();
+      setNotes((prev) => [newNote, ...prev]);
+      setSelectedNote(newNote);
+      setIsEditing(false);
+      setSuccess("Note created successfully!");
+    } catch (err) {
+      setError("Error creating note.");
+      console.error(err);
     }
-    const newNote = await res.json();
-    setNotes((prev) => [newNote, ...prev]);
-    setSelectedNote(newNote);
-    setIsEditing(false);
-    setSuccess("Note created successfully!");
-  } catch (err) {
-    setError("Error creating note.");
-    console.error(err);
-  }
-};
+  };
 
   const handleDelete = async (noteId) => {
     try {
-      const res = await fetch(`http://localhost:3001/notes/${noteId}`, {
+      const res = await fetch(`${API_URL}/notes/${noteId}`, {
         method: "DELETE",
         headers: {
           'Authorization': `Bearer ${token}`
@@ -182,7 +182,7 @@ const saveNewNote = async () => {
     if (!selectedNote) return;
     
     try {
-      const res = await fetch(`http://localhost:3001/notes/${selectedNote.id}`, {
+      const res = await fetch(`${API_URL}/notes/${selectedNote.id}`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -211,10 +211,8 @@ const saveNewNote = async () => {
   const handleCancelEdit = () => {
     setIsEditing(false);
     if (selectedNote && selectedNote.id > 1000000) {
-      // If it's a temporary note, clear the selection
       setSelectedNote(null);
     } else {
-      // If it's an existing note, restore original values
       setEditTitle(selectedNote?.title || "");
       setEditContent(selectedNote?.content || "");
     }
@@ -236,7 +234,6 @@ const saveNewNote = async () => {
     );
   };
   
-  // Update filtered notes whenever notes or search term changes
   useEffect(() => {
     setFilteredNotes(filterNotes(notes, searchTerm));
   }, [notes, searchTerm]);
@@ -301,73 +298,73 @@ const saveNewNote = async () => {
     <div className="app-container">
       {/* Sidebar */}
       <div className="sidebar">
-      <div className="sidebar-header">
-  <div className="sidebar-title">Notes</div>
-  <div className="search-container">
-    <input
-      type="text"
-      placeholder="Search notes..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="search-input"
-    />
-  </div>
-  <div className="user-info">
-    <span>{user?.name || user?.email}</span>
-    <button onClick={logout} className="logout-btn">Sign Out</button>
-  </div>
-</div>
+        <div className="sidebar-header">
+          <div className="sidebar-title">Notes</div>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search notes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+          <div className="user-info">
+            <span>{user?.name || user?.email}</span>
+            <button onClick={logout} className="logout-btn">Sign Out</button>
+          </div>
+        </div>
         
-<div className="notes-list">
-  {filteredNotes.length === 0 ? (
-    <div className="empty-state">
-      <h3>{searchTerm ? 'No matching notes' : 'No notes yet'}</h3>
-      <p>{searchTerm ? 'Try a different search term' : 'Create your first note to get started'}</p>
-    </div>
-  ) : (
-    filteredNotes.map((note) => (
-      <div 
-        key={note.id} 
-        className={`note-item-sidebar ${selectedNote?.id === note.id ? 'active' : ''}`}
-        onClick={() => handleNoteSelect(note)}
-      >
-        <div className="note-title-sidebar">{note.title}</div>
-        <div className="note-preview">{note.content}</div>
-      </div>
-    ))
-  )}
-</div>
+        <div className="notes-list">
+          {filteredNotes.length === 0 ? (
+            <div className="empty-state">
+              <h3>{searchTerm ? 'No matching notes' : 'No notes yet'}</h3>
+              <p>{searchTerm ? 'Try a different search term' : 'Create your first note to get started'}</p>
+            </div>
+          ) : (
+            filteredNotes.map((note) => (
+              <div 
+                key={note.id} 
+                className={`note-item-sidebar ${selectedNote?.id === note.id ? 'active' : ''}`}
+                onClick={() => handleNoteSelect(note)}
+              >
+                <div className="note-title-sidebar">{note.title}</div>
+                <div className="note-preview">{note.content}</div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="main-content">
-      <div className="content-header">
-  <div className="content-title">
-    {selectedNote ? (isEditing ? 'Editing Note' : selectedNote.title) : 'Select a note'}
-  </div>
-  <div className="content-actions">
-    {selectedNote && (
-      <>
-        {isEditing ? (
-          <>
-            {selectedNote.id > 1000000 ? ( // Temporary note (using timestamp as ID)
-              <button onClick={saveNewNote} className="btn btn-primary">Save Note</button>
-            ) : (
-              <button onClick={handleSave} className="btn btn-primary">Save</button>
+        <div className="content-header">
+          <div className="content-title">
+            {selectedNote ? (isEditing ? 'Editing Note' : selectedNote.title) : 'Select a note'}
+          </div>
+          <div className="content-actions">
+            {selectedNote && (
+              <>
+                {isEditing ? (
+                  <>
+                    {selectedNote.id > 1000000 ? (
+                      <button onClick={saveNewNote} className="btn btn-primary">Save Note</button>
+                    ) : (
+                      <button onClick={handleSave} className="btn btn-primary">Save</button>
+                    )}
+                    <button onClick={handleCancelEdit} className="btn btn-secondary">Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => setIsEditing(true)} className="btn btn-primary">Edit</button>
+                    <button onClick={() => handleDelete(selectedNote.id)} className="btn btn-danger">Delete</button>
+                  </>
+                )}
+              </>
             )}
-            <button onClick={handleCancelEdit} className="btn btn-secondary">Cancel</button>
-          </>
-        ) : (
-          <>
-            <button onClick={() => setIsEditing(true)} className="btn btn-primary">Edit</button>
-            <button onClick={() => handleDelete(selectedNote.id)} className="btn btn-danger">Delete</button>
-          </>
-        )}
-      </>
-    )}
-    <button onClick={createNewNote} className="btn btn-primary">New Note</button>
-  </div>
-</div>
+            <button onClick={createNewNote} className="btn btn-primary">New Note</button>
+          </div>
+        </div>
         
         <div className="content-body">
           {selectedNote ? (
