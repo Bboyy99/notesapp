@@ -10,7 +10,6 @@ function MobileNavToggle({ isOpen, onToggle }) {
       onClick={onToggle}
       aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
     >
-      {isOpen ? '✕' : '☰'}
     </button>
   );
 }
@@ -353,6 +352,7 @@ function App() {
   };
 
   const handleNoteSelect = (note) => {
+    console.log('Note selected:', note); // Debug log
     setSelectedNote(note);
     setIsEditing(false);
     setIsMobileFullscreen(false);
