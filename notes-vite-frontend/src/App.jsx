@@ -18,9 +18,90 @@ function RichTextEditor({ content, onChange, placeholder }) {
     },
   });
 
-  return <EditorContent editor={editor} />;
-}
+  if (!editor) {
+    return null;
+  }
 
+  return (
+    <div className="rich-text-container">
+      <div className="toolbar">
+        <button
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={`toolbar-btn ${editor.isActive('bold') ? 'active' : ''}`}
+          title="Bold"
+        >
+          B
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`toolbar-btn ${editor.isActive('italic') ? 'active' : ''}`}
+          title="Italic"
+        >
+          I
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          className={`toolbar-btn ${editor.isActive('underline') ? 'active' : ''}`}
+          title="Underline"
+        >
+          U
+        </button>
+        <div className="toolbar-divider"></div>
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={`toolbar-btn ${editor.isActive('heading', { level: 1 }) ? 'active' : ''}`}
+          title="Heading 1"
+        >
+          H1
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={`toolbar-btn ${editor.isActive('heading', { level: 2 }) ? 'active' : ''}`}
+          title="Heading 2"
+        >
+          H2
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          className={`toolbar-btn ${editor.isActive('heading', { level: 3 }) ? 'active' : ''}`}
+          title="Heading 3"
+        >
+          H3
+        </button>
+        <div className="toolbar-divider"></div>
+        <button
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={`toolbar-btn ${editor.isActive('bulletList') ? 'active' : ''}`}
+          title="Bullet List"
+        >
+          •
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={`toolbar-btn ${editor.isActive('orderedList') ? 'active' : ''}`}
+          title="Numbered List"
+        >
+          1.
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={`toolbar-btn ${editor.isActive('blockquote') ? 'active' : ''}`}
+          title="Quote"
+        >
+          "
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={`toolbar-btn ${editor.isActive('codeBlock') ? 'active' : ''}`}
+          title="Code Block"
+        >
+          &lt;/&gt;
+        </button>
+      </div>
+      <EditorContent editor={editor} />
+    </div>
+  );
+}
 function App() {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
