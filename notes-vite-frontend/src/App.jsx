@@ -1,5 +1,24 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+
+function RichTextEditor({ content, onChange, placeholder }) {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: content,
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: 'rich-text-editor',
+      },
+    },
+  });
+
+  return <EditorContent editor={editor} />;
+}
 
 function App() {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
