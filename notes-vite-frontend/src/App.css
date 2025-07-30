@@ -351,13 +351,28 @@ body {
 
 .ProseMirror p {
   margin: 0 0 1em 0;
+  line-height: 1.6;
 }
 
-.ProseMirror h1,
-.ProseMirror h2,
-.ProseMirror h3 {
-  margin: 1em 0 0.5em 0;
+.ProseMirror h1 {
+  font-size: 24px;
   font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  color: #1d1d1f;
+}
+
+.ProseMirror h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  color: #1d1d1f;
+}
+
+.ProseMirror h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  color: #1d1d1f;
 }
 
 .ProseMirror ul,
@@ -366,11 +381,16 @@ body {
   margin: 0.5em 0;
 }
 
+.ProseMirror li {
+  margin: 0.25em 0;
+}
+
 .ProseMirror blockquote {
   border-left: 3px solid #007aff;
   margin: 1em 0;
   padding-left: 1em;
   color: #666;
+  font-style: italic;
 }
 
 .ProseMirror code {
@@ -378,6 +398,7 @@ body {
   padding: 2px 4px;
   border-radius: 4px;
   font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
 }
 
 .ProseMirror pre {
@@ -385,6 +406,13 @@ body {
   padding: 1em;
   border-radius: 8px;
   overflow-x: auto;
+  margin: 1em 0;
+}
+
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
 }
 
 .ProseMirror strong {
@@ -394,6 +422,11 @@ body {
 .ProseMirror em {
   font-style: italic;
 }
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
 .rich-text-container {
   border: 1px solid #c6c6c8;
   border-radius: 8px;
@@ -450,4 +483,93 @@ body {
   line-height: 1.6;
   color: #1d1d1f;
   background: white;
+}
+/* Note Display Styles - Match Editor Appearance */
+.note-content-display {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1d1d1f;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #c6c6c8;
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.note-content-display h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  color: #1d1d1f;
+}
+
+.note-content-display h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  color: #1d1d1f;
+}
+
+.note-content-display h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  color: #1d1d1f;
+}
+
+.note-content-display p {
+  margin: 0 0 1em 0;
+  line-height: 1.6;
+}
+
+.note-content-display ul,
+.note-content-display ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.note-content-display li {
+  margin: 0.25em 0;
+}
+
+.note-content-display blockquote {
+  border-left: 3px solid #007aff;
+  margin: 1em 0;
+  padding-left: 1em;
+  color: #666;
+  font-style: italic;
+}
+
+.note-content-display code {
+  background: #f1f3f4;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
+}
+
+.note-content-display pre {
+  background: #f1f3f4;
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.note-content-display pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.note-content-display strong {
+  font-weight: 600;
+}
+
+.note-content-display em {
+  font-style: italic;
+}
+
+.note-content-display u {
+  text-decoration: underline;
 }
