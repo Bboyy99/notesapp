@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import "./App.css";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import "./App.css";
 
 function RichTextEditor({ content, onChange, placeholder }) {
   const editor = useEditor({
@@ -13,6 +13,7 @@ function RichTextEditor({ content, onChange, placeholder }) {
     editorProps: {
       attributes: {
         class: 'rich-text-editor',
+        placeholder: placeholder,
       },
     },
   });
@@ -348,7 +349,7 @@ function App() {
                 onClick={() => handleNoteSelect(note)}
               >
                 <div className="note-title-sidebar">{note.title}</div>
-                <div className="note-preview">{note.content}</div>
+                <div className="note-preview">{note.content.replace(/<[^>]*>/g, '')}</div>
               </div>
             ))
           )}
@@ -396,19 +397,17 @@ function App() {
                   className="input-field"
                   placeholder="Note title"
                 />
-                <textarea
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  className="input-field"
+                <RichTextEditor
+                  content={editContent}
+                  onChange={setEditContent}
                   placeholder="Start writing your note..."
-                  rows={20}
-                  style={{ resize: 'vertical' }}
                 />
               </div>
             ) : (
-              <div className="note-content-display">
-                {selectedNote.content || "This note is empty. Click Edit to add content."}
-              </div>
+              <div 
+                className="note-content-display"
+                dangerouslySetInnerHTML={{ __html: selectedNote.content || "This note is empty. Click Edit to add content." }}
+              />
             )
           ) : (
             <div className="empty-state">
