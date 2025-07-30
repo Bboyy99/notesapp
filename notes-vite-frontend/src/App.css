@@ -413,7 +413,7 @@ body {
 .toolbar-btn {
   padding: 6px 10px;
   border: 1px solid #c6c6c8;
-  background: white;
+  background: rgb(46, 108, 255);
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
