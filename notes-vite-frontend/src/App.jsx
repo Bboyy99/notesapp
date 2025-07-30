@@ -3,6 +3,18 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import "./App.css";
 
+function MobileNavToggle({ isOpen, onToggle }) {
+  return (
+    <button 
+      className="mobile-nav-toggle" 
+      onClick={onToggle}
+      aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
+    >
+      {isOpen ? '✕' : '☰'}
+    </button>
+  );
+}
+
 function RichTextEditor({ content, onChange, placeholder }) {
   const editor = useEditor({
     extensions: [StarterKit],
@@ -102,6 +114,7 @@ function RichTextEditor({ content, onChange, placeholder }) {
     </div>
   );
 }
+
 function App() {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
@@ -131,6 +144,10 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredNotes, setFilteredNotes] = useState([]);
 
+  // Mobile states
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
+
   // Check if user is logged in on app start
   useEffect(() => {
     if (token) {
@@ -140,6 +157,13 @@ function App() {
       setLoading(false);
     }
   }, [token]);
+
+  // Close sidebar when note is selected on mobile
+  useEffect(() => {
+    if (selectedNote && window.innerWidth <= 768) {
+      setSidebarOpen(false);
+    }
+  }, [selectedNote]);
 
   const fetchNotes = async () => {
     try {
@@ -230,6 +254,11 @@ function App() {
     setEditTitle("Untitled Note");
     setEditContent("");
     setSearchTerm("");
+    
+    // Enter fullscreen mode on mobile when creating new note
+    if (window.innerWidth <= 768) {
+      setIsMobileFullscreen(true);
+    }
   };
 
   const saveNewNote = async () => {
@@ -249,6 +278,7 @@ function App() {
       setNotes((prev) => [newNote, ...prev]);
       setSelectedNote(newNote);
       setIsEditing(false);
+      setIsMobileFullscreen(false);
       setSuccess("Note created successfully!");
     } catch (err) {
       setError("Error creating note.");
@@ -271,6 +301,7 @@ function App() {
       if (selectedNote && selectedNote.id === noteId) {
         setSelectedNote(notes.length > 1 ? notes.find(n => n.id !== noteId) : null);
         setIsEditing(false);
+        setIsMobileFullscreen(false);
       }
       setSuccess("Note deleted successfully!");
     } catch (err) {
@@ -302,6 +333,7 @@ function App() {
       );
       setSelectedNote(updatedNote);
       setIsEditing(false);
+      setIsMobileFullscreen(false);
       setSuccess("Note saved successfully!");
     } catch (err) {
       console.error("Error updating note:", err);
@@ -311,6 +343,7 @@ function App() {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
+    setIsMobileFullscreen(false);
     if (selectedNote && selectedNote.id > 1000000) {
       setSelectedNote(null);
     } else {
@@ -322,8 +355,16 @@ function App() {
   const handleNoteSelect = (note) => {
     setSelectedNote(note);
     setIsEditing(false);
+    setIsMobileFullscreen(false);
     setEditTitle(note.title);
     setEditContent(note.content);
+  };
+
+  const handleStartEdit = () => {
+    setIsEditing(true);
+    if (window.innerWidth <= 768) {
+      setIsMobileFullscreen(true);
+    }
   };
 
   const filterNotes = (notes, searchTerm) => {
@@ -395,10 +436,78 @@ function App() {
     );
   }
 
+  const mainContent = (
+    <div className={`main-content ${isMobileFullscreen ? 'mobile-fullscreen' : ''}`}>
+      <div className="content-header">
+        <div className="content-title">
+          {selectedNote ? (isEditing ? 'Editing Note' : selectedNote.title) : 'Select a note'}
+        </div>
+        <div className="content-actions">
+          {selectedNote && (
+            <>
+              {isEditing ? (
+                <>
+                  {selectedNote.id > 1000000 ? (
+                    <button onClick={saveNewNote} className="btn btn-primary">Save Note</button>
+                  ) : (
+                    <button onClick={handleSave} className="btn btn-primary">Save</button>
+                  )}
+                  <button onClick={handleCancelEdit} className="btn btn-secondary">Cancel</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={handleStartEdit} className="btn btn-primary">Edit</button>
+                  <button onClick={() => handleDelete(selectedNote.id)} className="btn btn-danger">Delete</button>
+                </>
+              )}
+            </>
+          )}
+          <button onClick={createNewNote} className="btn btn-primary">New Note</button>
+        </div>
+      </div>
+      
+      <div className="content-body">
+        {selectedNote ? (
+          isEditing ? (
+            <div className="note-form">
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="input-field"
+                placeholder="Note title"
+              />
+              <RichTextEditor
+                content={editContent}
+                onChange={setEditContent}
+                placeholder="Start writing your note..."
+              />
+            </div>
+          ) : (
+            <div 
+              className="note-content-display"
+              dangerouslySetInnerHTML={{ __html: selectedNote.content || "This note is empty. Click Edit to add content." }}
+            />
+          )
+        ) : (
+          <div className="empty-state">
+            <h3>Welcome to Notes</h3>
+            <p>Select a note from the sidebar or create a new one to get started.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="app-container">
+      <MobileNavToggle 
+        isOpen={sidebarOpen} 
+        onToggle={() => setSidebarOpen(!sidebarOpen)} 
+      />
+      
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-title">Notes</div>
           <div className="search-container">
@@ -438,66 +547,7 @@ function App() {
       </div>
 
       {/* Main Content */}
-      <div className="main-content">
-        <div className="content-header">
-          <div className="content-title">
-            {selectedNote ? (isEditing ? 'Editing Note' : selectedNote.title) : 'Select a note'}
-          </div>
-          <div className="content-actions">
-            {selectedNote && (
-              <>
-                {isEditing ? (
-                  <>
-                    {selectedNote.id > 1000000 ? (
-                      <button onClick={saveNewNote} className="btn btn-primary">Save Note</button>
-                    ) : (
-                      <button onClick={handleSave} className="btn btn-primary">Save</button>
-                    )}
-                    <button onClick={handleCancelEdit} className="btn btn-secondary">Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => setIsEditing(true)} className="btn btn-primary">Edit</button>
-                    <button onClick={() => handleDelete(selectedNote.id)} className="btn btn-danger">Delete</button>
-                  </>
-                )}
-              </>
-            )}
-            <button onClick={createNewNote} className="btn btn-primary">New Note</button>
-          </div>
-        </div>
-        
-        <div className="content-body">
-          {selectedNote ? (
-            isEditing ? (
-              <div className="note-form">
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  className="input-field"
-                  placeholder="Note title"
-                />
-                <RichTextEditor
-                  content={editContent}
-                  onChange={setEditContent}
-                  placeholder="Start writing your note..."
-                />
-              </div>
-            ) : (
-              <div 
-                className="note-content-display"
-                dangerouslySetInnerHTML={{ __html: selectedNote.content || "This note is empty. Click Edit to add content." }}
-              />
-            )
-          ) : (
-            <div className="empty-state">
-              <h3>Welcome to Notes</h3>
-              <p>Select a note from the sidebar or create a new one to get started.</p>
-            </div>
-          )}
-        </div>
-      </div>
+      {mainContent}
     </div>
   );
 }

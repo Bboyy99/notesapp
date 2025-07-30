@@ -573,3 +573,216 @@ body {
 .note-content-display u {
   text-decoration: underline;
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 60vh;
+    border-right: none;
+    border-bottom: 1px solid #c6c6c8;
+  }
+
+  .main-content {
+    height: 40vh;
+  }
+
+  .content-header {
+    padding: 12px 16px;
+  }
+
+  .content-title {
+    font-size: 18px;
+  }
+
+  .content-actions {
+    gap: 6px;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .toolbar {
+    padding: 6px 8px;
+    gap: 2px;
+  }
+
+  .toolbar-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    min-width: 36px;
+  }
+
+  .rich-text-editor {
+    min-height: 150px;
+    padding: 8px 12px;
+  }
+
+  .note-content-display {
+    min-height: 150px;
+    padding: 8px 12px;
+  }
+
+  .input-field {
+    padding: 10px 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .search-input {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+}
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    width: 280px;
+  }
+
+  .toolbar-btn {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile Navigation */
+.mobile-nav-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .mobile-nav-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    z-index: 999;
+    transition: left 0.3s ease;
+    background: #f2f2f7;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .main-content {
+    width: 100%;
+    height: 100vh;
+  }
+}
+
+/* Touch-Friendly Improvements */
+@media (max-width: 768px) {
+  .note-item-sidebar {
+    padding: 20px 16px;
+    min-height: 60px;
+  }
+
+  .btn {
+    min-height: 44px; /* iOS recommended touch target */
+    min-width: 44px;
+  }
+
+  .toolbar-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Swipe gestures */
+  .note-item-sidebar {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .note-item-sidebar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, #ff3b30);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .note-item-sidebar.swipe-delete::after {
+    transform: translateX(0);
+  }
+}
+
+/* Mobile Full-Screen Editing */
+@media (max-width: 768px) {
+  .mobile-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1001;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-fullscreen .content-header {
+    padding: 16px;
+    border-bottom: 1px solid #c6c6c8;
+  }
+
+  .mobile-fullscreen .content-body {
+    flex: 1;
+    padding: 16px;
+  }
+
+  .mobile-fullscreen .rich-text-editor {
+    min-height: calc(100vh - 200px);
+  }
+}
+
+/* Mobile Keyboard Handling */
+@media (max-width: 768px) {
+  .input-field:focus,
+  .search-input:focus,
+  .rich-text-editor:focus {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Mobile Loading States */
+@media (max-width: 768px) {
+  .loading {
+    padding: 60px 20px;
+    font-size: 18px;
+  }
+
+  .empty-state {
+    padding: 80px 20px;
+  }
+}
