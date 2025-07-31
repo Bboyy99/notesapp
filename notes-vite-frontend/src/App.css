@@ -286,19 +286,169 @@ body {
 }
 
 /* Responsive */
+/* Fix Layout Issues */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: 100vh;
-  }
-  
-  .main-content {
-    display: none;
-  }
-  
   .app-container {
     flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
   }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    z-index: 999;
+    transition: left 0.3s ease;
+    background: #f2f2f7;
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .main-content {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+  }
+
+  .content-header {
+    flex-shrink: 0;
+    padding: 16px;
+    border-bottom: 1px solid #c6c6c8;
+    background: white;
+  }
+
+  .content-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    min-height: 0; /* Important for flex child */
+  }
+
+  .note-content-display {
+    min-height: 200px;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #c6c6c8;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .note-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .note-form .input-field {
+    flex-shrink: 0;
+    margin-bottom: 12px;
+  }
+
+  .note-form .rich-text-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .note-form .rich-text-editor {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .mobile-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1001;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-fullscreen .content-header {
+    flex-shrink: 0;
+    padding: 16px;
+    border-bottom: 1px solid #c6c6c8;
+    background: white;
+  }
+
+  .mobile-fullscreen .content-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .mobile-fullscreen .rich-text-editor {
+    min-height: calc(100vh - 200px);
+  }
+}
+
+/* Desktop responsive fix */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app-container {
+    height: 100vh;
+  }
+
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .content-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+}
+
+/* Ensure content is always visible */
+.content-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.note-content-display {
+  min-height: 200px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #c6c6c8;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8e8e93;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #1d1d1f;
+}
+
+.empty-state p {
+  font-size: 16px;
 }
 
 .search-container {
